@@ -17,15 +17,17 @@ from playsound import playsound
 import os
 import random
 
-def capture(date,id):
-    try:
-        vid = cv2.VideoCapture(0)
-        ret, frame = vid.read()
-        cv2.imwrite(f'/home/phawit/Documents/store_tk/captures/{date}_{id}.png', frame)
-        vid.release()
-        return True
-    except:
-        return False
+def capture(date,id,total):
+    vid = cv2.VideoCapture(0)
+    ret, frame = vid.read()
+    cv2.imwrite(f'/home/phawit/Documents/store2022-2/captures/{date}_{id}_{total}.png', frame)
+    vid.release()
+    
+def capture2(date,id,total):
+    vid = cv2.VideoCapture(2)
+    ret, frame = vid.read()
+    cv2.imwrite(f'/home/phawit/Documents/store2022-2/captures/products_{date}_{id}_{total}.png', frame)
+    vid.release()
 
 def create_history(Barcodes):
   B = []
@@ -156,7 +158,8 @@ def save_history2(Historys,time_now,date_now):
     print('Historys',Historys)
 
     if internet_connection():
-        #update current stock
+    
+    	#update current stock
         for i in [x for x in Historys.keys() if x.isnumeric()]:
             ref = db.collection(u'stocks').document('current')
             try:
@@ -166,15 +169,20 @@ def save_history2(Historys,time_now,date_now):
             ref.update({Historys[i]['barcode']:n+Historys[i]['amount']*-1})
         #----------------------------
 
-        try:
-            doc_ref = db.collection(u'History').document(u'sell')
-            doc_ref.update({f'{str(date_now)}.{str(time_now)}': Historys})
-            cap = capture(f'{str(date_now)}.{str(time_now)}',Historys['customer'])
-            print('capture ::',cap)
-
-            return 'complete'
-        except:
-            return 'notconnectfb'
+        print(str(date_now),str(time_now))
+        print('Historys',Historys)
+        
+        #try:
+        doc_ref = db.collection(u'History').document(u'sell')
+        doc_ref.update({f'{str(date_now)}.{str(time_now)}': Historys})
+            # try:
+            # 	capture(f'{str(date_now)}.{str(time_now)}',Historys['customer'],Historys['total'])
+            # 	capture2(f'{str(date_now)}.{str(time_now)}',Historys['customer'],Historys['total'])
+            # except:
+            # 	print('not connect camera')           
+        return 'complete'
+        # except:
+        #     return 'notconnectfb'
             
     else:
         return 'nointernet'
@@ -184,8 +192,8 @@ def update_img(sta):
     #     sta = 'scanforpay'
     # else:
     #     sta = 'scanproduct'
-    image = Image.open(f"/home/phawit/Documents/store_tk/imgs/{sta}.png")
-    image = image.resize((450, 500))  #.resize((int(image.width * .5), int(image.height * .5)))
+    image = Image.open(f"/home/phawit/Documents/store2022-2/imgs/{sta}.png")
+    image = image.resize((360, 500))  #.resize((int(image.width * .5), int(image.height * .5)))
     imgTk = ImageTk.PhotoImage(image)
     img.configure(image=imgTk)
     img.image = imgTk
@@ -243,7 +251,7 @@ def on_click(e):
             table = create_history(Barcodes)
             print('customer',customer)
             print("table['Total']",table['total'])
-            # if int(custom['balance']) >= abs(table['total']):
+            #if int(custom['balance']) >= abs(table['total']):
             if True:
                 time_now = datetime.now().strftime("%H%M%S%f")
                 date_now = datetime.now().strftime("%Y%m%d")
@@ -258,20 +266,20 @@ def on_click(e):
                     update_img('finish')
                     status.set(f"{custom['name']} Balance : {custom['balance']+table['total']} ฿")
                     total.set(f"Finish! {table['total']} ฿")
-                    arr = os.listdir('imgs')
+                    arr = os.listdir('/home/phawit/Documents/store2022-2/imgs')
                     finish_sound = [x for x in arr if '.mp3' in x and 'finish' in x]
                     finish_sound = random.sample(finish_sound, 1)[0]
-                    playsound(f'/home/phawit/Documents/store_tk/imgs/{finish_sound}')
+                    playsound(f'/home/phawit/Documents/store2022-2/imgs/{finish_sound}')
 
                     
 
             else:
-                status.set(f"Not Enought money! Your Balance :{custom['balance']} ฿")
+                status.set(f"Not Enought money!   {custom['name']}  :  {custom['balance']}  ฿")
                 update_img('nomoney')
-                arr = os.listdir('imgs')
+                arr = os.listdir('/home/phawit/Documents/store2022-2/imgs')
                 nomoney_sound = [x for x in arr if '.mp3' in x and 'nomoney' in x]
                 nomoney_sound = random.sample(nomoney_sound, 1)[0]
-                playsound(f'/home/phawit/Documents/store_tk/imgs/{nomoney_sound}')
+                playsound(f'/home/phawit/Documents/store2022-2/imgs/{nomoney_sound}')
 
         else:
             status.set("No internet!")
@@ -326,13 +334,13 @@ root = Tk()
 bigFont = Font(root=root.master,family="Helvetica",size="20",weight="bold",slant="roman",underline=0,overstrike=0)
 
 root.option_add("*Font", "Helvetica 20")
-f1 = Frame(root, bg="green")
+f1 = Frame(root, bg="red")
 f1.grid(row=0, column=0, columnspan=3)
-f2 = Frame(root, bg="red")
+f2 = Frame(root,bg='red')
 f2.grid(row=1, column=0)
 f3 = Frame(root)
 f3.grid(row=1, column=1, sticky="news",padx=30, pady=30)
-f4 = Frame(root,bg="red")
+f4 = Frame(root,bg="white")
 f4.grid(row=1, column=2,sticky="news")
 f5 = Frame(root)
 f5.grid(row=3, column=0,columnspan=3)
@@ -345,9 +353,9 @@ status.set('scan your products')
 total.set('Ready')
 
 
-Label(f1, text="Barcode", width=25).pack(side=LEFT,padx=10, pady=10)
+Label(f1, fg="white",bg="red",font= ('Helvetica 50 bold'),text="Deep Store", width=23).pack(side=LEFT,padx=5, pady=5)
 
-txt = Entry(f1, width=30, fg="green")
+txt = Entry(f1, width=30, fg="red",bg='red')
 txt.insert(END, "")
 txt.focus_set()  #click...................
 txt.pack(side=LEFT,padx=10, pady=10)
@@ -360,7 +368,7 @@ btn.bind("<Button-1>", on_click)
 Menu = []
 Shortcuts = Shortcut()
 print('Shortcuts',Shortcuts)
-for i in range(18):
+for i in range(14):
     if str(i+1) in Shortcuts.keys():
         Menu.append(Shortcuts[str(i+1)]['name'])
     else:
@@ -373,15 +381,21 @@ for i,menu in enumerate(Menu):
     # mbtn = Button(f2, text=menu,width=8)
     # mbtn.grid(row=i//2, column=i%2, padx=5, pady=5)
     # mbtn.bind("<Button-1>", on_click2)
+    fg = 'black'
+    bg='white'
     if str(i+1) in Shortcuts.keys():
         btn_detail = Shortcuts[str(i+1)]['barcode']
     elif menu == 'RESET':
         btn_detail = 'RESET'
+        fg = 'white'
+        bg='red'
     elif menu == 'DELETE':
         btn_detail = 'DELETE'
+        fg = 'white'
+        bg='red'
     else:
         btn_detail = 'notset'
-    mbtn = Button(f2, width=13,text=menu,font=bigFont,command=lambda m=btn_detail: on_click2(m))
+    mbtn = Button(f2, width=11,height=2,fg=fg,bg=bg,text=menu,font=bigFont,command=lambda m=btn_detail: on_click2(m))
     mbtn.grid(row=i//2, column=i%2, padx=5, pady=5)
 
 # Label(f3, text='Products',justify="left").pack(anchor=W)
@@ -398,15 +412,15 @@ img = Label(f4)
 img.pack()
 update_img('scanproduct')
 
-Label(f4, textvariable=total,fg='red',font= ('Helvetica 40 bold')).pack(fill=X,padx=10, pady=10)
+Label(f4, textvariable=total,fg='red',bg='white',font= ('Helvetica 40 bold')).pack(fill=X,padx=10, pady=10)
 Label(f5, textvariable=status,fg='blue',font= ('Helvetica 30 bold')).pack(fill=X,padx=10, pady=5)
 
 root.bind('<Return>',on_click)
 # root.bind("<->", on_click('DELETE'))
 
-# root.attributes("-fullscreen", True)
-# root.bind("<F11>", lambda event: root.attributes("-fullscreen",
-#                                     not root.attributes("-fullscreen")))
-# root.bind("<Escape>", lambda event: root.attributes("-fullscreen", False))
+root.attributes("-fullscreen", True)
+root.bind("<F11>", lambda event: root.attributes("-fullscreen",
+                                    not root.attributes("-fullscreen")))
+root.bind("<Escape>", lambda event: root.attributes("-fullscreen", False))
 
 root.mainloop()
