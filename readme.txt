@@ -13,3 +13,9 @@ which python3
 
 pip3 install --upgrade pip setuptools wheel
 pip3 install opencv-python
+
+
+ตั้งค่า disable 3figure touch
+1.install gnome-extensions  
+2.gnome-extensions install disable-gestures@mattbell.com.au.v2.shell-extension.zip
+3.gnome-extensions enable disable-gestures@mattbell.com.au.v2
