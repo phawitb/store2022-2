@@ -16,6 +16,15 @@ pip3 install opencv-python
 
 
 ตั้งค่า disable 3figure touch
+#ubuntu20
 1.install gnome-extensions  
 2.gnome-extensions install disable-gestures@mattbell.com.au.v2.shell-extension.zip
 3.gnome-extensions enable disable-gestures@mattbell.com.au.v2
+
+#ubuntu18
+https://www.debugpoint.com/manual-installation-gnome-extension/
+unzip disable-gestures@mattbell.com.au.v2.shell-extension.zip -d /home/phawit/.local/share/gnome-shell/extensions/
+sudo apt install gnome-shell-extensions
+gnome-shell-extension-tool -e disable-gestures@mattbell.com.au
+
+
