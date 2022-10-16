@@ -78,7 +78,7 @@ def infinite_loop():
         print('infinite_loop....st_barcode',st_barcode)
     
     if START:
-        on_click('QR')
+        on_click('START')
         START = False
 
     if scan_qr == True and Barcodes:
@@ -161,6 +161,7 @@ def get_balance():
             driver = webdriver.Chrome(chrome_options=options)
 
         driver.get("https://www.ttbdirect.com/ttb/kdw1.39.2#_frmIBPreLogin")
+        # driver.get("https://www.sdvsdvsdv.com")
         time.sleep(5)
         login()
     elif current_st == 'relogin':
@@ -409,7 +410,7 @@ def on_click2(e):
     
     
 def on_click(e):
-    global Barcodes,df_products,TOTAL,scan_qr,driver,balance_ttb
+    global Barcodes,df_products,TOTAL,scan_qr,driver,balance_ttb,START
     print('eeeeeeeeeeeeeeeeeeeeeeeeeeee',e)
 
     
@@ -426,6 +427,9 @@ def on_click(e):
         Barcodes = Barcodes[:-1]
         if not Barcodes:
             scan_qr = False
+
+    elif e == 'START':
+        balance_ttb = get_balance()
     elif e == 'QR' and Barcodes:
         # driver = webdriver.Chrome()
         # start()
@@ -441,8 +445,14 @@ def on_click(e):
         if get_balance()-balance_ttb == TOTAL:
             input_text = '2874668560376'
             print('recieve money')
+            status.set('recieve money')
+        else:
+            if status.get() == 'scan for payment':
+                status.set('scan QR for payment')
+            else:
+                status.set('not recieve money')
         
-        elif balance_ttb:
+        if balance_ttb:
             QR_READY = True
             gen_qr('0911971661',TOTAL)
             scan_qr = True
