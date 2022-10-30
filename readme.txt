@@ -35,3 +35,7 @@ https://skolo.online/documents/webscrapping/#step-2-install-chromedriver
 pip3 install selinium
 
 
+https://stackoverflow.com/questions/49888623/tkinter-hovering-over-button-color-change
+button = Button(root, text="Click me", bg="#000", fg="#fff", activebackground="#f00", activeforeground="#fff")
+
+
