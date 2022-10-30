@@ -27,4 +27,11 @@ unzip disable-gestures@mattbell.com.au.v2.shell-extension.zip -d /home/phawit/.l
 sudo apt install gnome-shell-extensions
 gnome-shell-extension-tool -e disable-gestures@mattbell.com.au
 
+1.install chrome
+https://linuxize.com/post/how-to-install-google-chrome-web-browser-on-ubuntu-20-04/
+2.test Install Chromedriver
+https://skolo.online/documents/webscrapping/#step-2-install-chromedriver
+3.install selinium
+pip3 install selinium
+
 
